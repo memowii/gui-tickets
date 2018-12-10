@@ -96,19 +96,46 @@ class Table {
   }
 
   addTickets(tickets) {
-    Object.entries(tickets).forEach(([key, value]) => {
-      let row = table.insertRow(1);
+    Object.entries(tickets).forEach(([key, ticket]) => {
+      let row = this.table.insertRow(++key);
       let numeroConsecutivoTicketCell = row.insertCell(0);
       let accionesCell = row.insertCell(1);
 
-      numeroConsecutivoTicketCell.innerHTML = value;
-      if (areUsed) {
-        numeroConsecutivoTicketCell.style.textDecoration = 'line-through';
-      }
+      numeroConsecutivoTicketCell.innerHTML = ticket.consecutivo;
+      if (ticket.esta_usado) numeroConsecutivoTicketCell.style.textDecoration = 'line-through';
       accionesCell.innerHTML = `<div>
       <button class="copiar" type="button">Copiar</button>
-      <button class="marcar" type="button">Marcar</button>
+      <button class="marcar" type="button" value="${ticket.id}">Marcar</button>
       </div>`;
+    });
+
+    let copiarButtons = document.getElementsByClassName('copiar');
+    Object.entries(copiarButtons).forEach(([key, copiarButton]) => {
+      copiarButton.addEventListener('click', function () {
+        let tableData = this.parentElement.parentElement.parentElement.firstChild;
+        let boardInput = document.getElementById('board-input');
+        boardInput.value = tableData.textContent;
+        boardInput.select();
+        document.execCommand('copy');
+      });
+    });
+  
+    let marcarButtons = document.getElementsByClassName('marcar');
+    Object.entries(marcarButtons).forEach(([key, marcarButton]) => {
+      marcarButton.addEventListener('click', function () {
+        let consecutivoTableData = 
+                  this.parentElement.parentElement.parentElement.firstChild;
+        let ticket = {
+          id: this.value,
+          consecutivo: consecutivoTableData.textContent,
+          esta_usado:
+              consecutivoTableData.style.textDecoration !== 'line-through' ? 1 : 0
+        };
+
+        DB.execute(db => db.updateTicket(ticket).then(() => {
+          consecutivoTableData.style.textDecoration = 'line-through';
+        }));
+      });
     });
   }
 }
@@ -132,46 +159,11 @@ function populateDB() {
   }));
 }
 
-function fillTable(tickets, areUsed = false) {
-  let table = document.getElementById('table-numero-consecutivo-ticket');
-
-  Object.entries(tickets).forEach(([key, value]) => {
-    let row = table.insertRow(1);
-    let numeroConsecutivoTicketCell = row.insertCell(0);
-    let accionesCell = row.insertCell(1);
-
-    numeroConsecutivoTicketCell.innerHTML = value;
-    if (areUsed) {
-      numeroConsecutivoTicketCell.style.textDecoration = 'line-through';
-    }
-    accionesCell.innerHTML = `<div>
-    <button class="copiar" type="button">Copiar</button>
-    <button class="marcar" type="button">Marcar</button>
-    </div>`;
-  });
-
-  let copiarButtons = document.getElementsByClassName('copiar');
-  Object.entries(copiarButtons).forEach(([key, copiarButton]) => {
-    copiarButton.addEventListener('click', function () {
-      let tableData = this.parentElement.parentElement.parentElement.firstChild;
-      let boardInput = document.getElementById('board-input');
-      boardInput.value = tableData.textContent;
-      boardInput.select();
-      document.execCommand('copy');
-    });
-  });
-
-  let marcarButtons = document.getElementsByClassName('marcar');
-  Object.entries(marcarButtons).forEach(([key, marcarButton]) => {
-    marcarButton.addEventListener('click', function () {
-      let tableData = this.parentElement.parentElement.parentElement.firstChild;
-      tableData.style.textDecoration = 'line-through';
-    });
-  });
-}
-
 function main() {
-
+  let table = new Table('table-numero-consecutivo-ticket');
+  DB.execute(db => db.fetchTickets().then(results => {
+    table.addTickets(results);
+  }));
 }
 
 main();
