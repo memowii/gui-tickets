@@ -100,12 +100,20 @@ class Table {
       let row = this.table.insertRow(++key);
       let numeroConsecutivoTicketCell = row.insertCell(0);
       let accionesCell = row.insertCell(1);
+      let marcarDesmarTextContent = null;
 
       numeroConsecutivoTicketCell.innerHTML = ticket.consecutivo;
-      if (ticket.esta_usado) numeroConsecutivoTicketCell.style.textDecoration = 'line-through';
+
+      if (ticket.esta_usado) {
+        numeroConsecutivoTicketCell.style.textDecoration = 'line-through';
+        marcarDesmarTextContent = 'Desmarcar';
+      } else {
+        marcarDesmarTextContent = 'Marcar';
+      }
+
       accionesCell.innerHTML = `<div>
       <button class="copiar" type="button">Copiar</button>
-      <button class="marcar" type="button" value="${ticket.id}">Marcar</button>
+      <button class="marcar-desmarcar" type="button" value="${ticket.id}">${marcarDesmarTextContent}</button>
       </div>`;
     });
 
@@ -120,20 +128,31 @@ class Table {
       });
     });
   
-    let marcarButtons = document.getElementsByClassName('marcar');
-    Object.entries(marcarButtons).forEach(([key, marcarButton]) => {
-      marcarButton.addEventListener('click', function () {
+    let marcarDesmarcarButtons = document.getElementsByClassName('marcar-desmarcar');
+    Object.entries(marcarDesmarcarButtons).forEach(([key, marcarDesmarcarButton]) => {
+      marcarDesmarcarButton.addEventListener('click', function () {
         let consecutivoTableData = 
                   this.parentElement.parentElement.parentElement.firstChild;
         let ticket = {
           id: this.value,
           consecutivo: consecutivoTableData.textContent,
-          esta_usado:
-              consecutivoTableData.style.textDecoration !== 'line-through' ? 1 : 0
+          esta_usado: null
         };
 
+        if (this.textContent === 'Marcar') {
+          ticket.esta_usado = 1;
+        } else {
+          ticket.esta_usado = 0;
+        }
+
         DB.execute(db => db.updateTicket(ticket).then(() => {
-          consecutivoTableData.style.textDecoration = 'line-through';
+          if (this.textContent === 'Marcar') {
+            consecutivoTableData.style.textDecoration = 'line-through';
+            this.innerHTML = 'Desmarcar';
+          } else {
+            consecutivoTableData.style.textDecoration = '';
+            this.innerHTML = 'Marcar';
+          }
         }));
       });
     });
