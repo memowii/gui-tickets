@@ -38,7 +38,8 @@ class DB {
 
   fetchTickets() {
     return new Promise((resolve, reject) => {
-      this.connection.query('SELECT * FROM tickets', (error, results) => {
+      this.connection.query('SELECT * FROM tickets WHERE esta_usado=1 UNION' + ' ' +
+      'SELECT * FROM tickets WHERE esta_usado=0 ORDER BY consecutivo', (error, results) => {
         if (error) throw reject(error);
         resolve(results);
       });
@@ -98,11 +99,13 @@ class Table {
   }
 
   addTickets(tickets) {
+
     Object.entries(tickets).forEach(([key, ticket]) => {
       let row = this.table.insertRow(++key);
       let numeroConsecutivoTicketCell = row.insertCell(0);
       let accionesCell = row.insertCell(1);
       let marcarDesmarTextContent = null;
+      let usedTicketsAmount = this.countUsedTickets(tickets);
 
       numeroConsecutivoTicketCell.innerHTML = ticket.consecutivo;
 
@@ -113,10 +116,15 @@ class Table {
         marcarDesmarTextContent = 'Marcar';
       }
 
-      accionesCell.innerHTML = `<div>
-      <button class="copiar" type="button">Copiar</button>
-      <button class="marcar-desmarcar" type="button" value="${ticket.id}">${marcarDesmarTextContent}</button>
-      </div>`;
+      if (usedTicketsAmount === key) {
+        numeroConsecutivoTicketCell.setAttribute('id', 'last');
+      }
+
+      accionesCell.innerHTML = `
+        <div>
+          <button class="copiar" type="button">Copiar</button>
+          <button class="marcar-desmarcar" type="button" value="${ticket.id}">${marcarDesmarTextContent}</button>
+        </div>`;
     });
 
     let copiarButtons = document.getElementsByClassName('copiar');
@@ -158,6 +166,27 @@ class Table {
         }));
       });
     }
+
+    this.scrollToLastUsedTicket();
+  }
+
+  countUsedTickets(tickets) {
+   let total = 0;
+   for (let ticketIndx in tickets) {
+     if (tickets[ticketIndx].esta_usado === 1) total++;
+   }
+   return total;
+  }
+
+  scrollToLastUsedTicket() {
+    let aTag = document.createElement('a');
+    aTag.setAttribute('href', '#last');
+    aTag.innerHTML = 'temp';
+    let body = document.getElementsByTagName('body')[0]
+    body.appendChild(aTag);
+    let anchor = document.getElementsByTagName('a')[0]
+    anchor.click();
+    anchor.parentNode.removeChild(anchor); 
   }
 }
 
