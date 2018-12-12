@@ -135,6 +135,11 @@ class Table {
         boardInput.value = tableData.textContent;
         boardInput.select();
         document.execCommand('copy');
+        let snackbar = document.getElementById('snackbar');
+        snackbar.classList.add('show');
+        setTimeout(() => {
+          snackbar.classList.remove('show');
+        }, 3000);
       });
     }
   
