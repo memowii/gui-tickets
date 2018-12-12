@@ -1,3 +1,5 @@
+"use strict";
+
 // https://codeburst.io/node-js-mysql-and-promises-4c3be599909b 
 
 let app = require('electron').remote;
@@ -118,19 +120,19 @@ class Table {
     });
 
     let copiarButtons = document.getElementsByClassName('copiar');
-    Object.entries(copiarButtons).forEach(([key, copiarButton]) => {
-      copiarButton.addEventListener('click', function () {
+    for (let i = 0; i < copiarButtons.length; i++) {
+      copiarButtons[i].addEventListener('click', function () {
         let tableData = this.parentElement.parentElement.parentElement.firstChild;
         let boardInput = document.getElementById('board-input');
         boardInput.value = tableData.textContent;
         boardInput.select();
         document.execCommand('copy');
       });
-    });
+    }
   
     let marcarDesmarcarButtons = document.getElementsByClassName('marcar-desmarcar');
-    Object.entries(marcarDesmarcarButtons).forEach(([key, marcarDesmarcarButton]) => {
-      marcarDesmarcarButton.addEventListener('click', function () {
+    for (let i = 0; i < marcarDesmarcarButtons.length; i++) {
+      marcarDesmarcarButtons[i].addEventListener('click', function () {
         let consecutivoTableData = 
                   this.parentElement.parentElement.parentElement.firstChild;
         let ticket = {
@@ -155,7 +157,7 @@ class Table {
           }
         }));
       });
-    });
+    }
   }
 }
 

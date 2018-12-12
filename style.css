@@ -3,6 +3,23 @@ table, th, td {
   border-collapse: collapse;
 }
 
+td {
+  padding: 5px;
+  text-align: center;
+}
+
+td:first-child {
+  width: 100px;
+}
+
+td:last-child {
+  width: 130px;
+}
+
+button {
+  width: 80px;
+}
+
 #board-input {
   position: absolute;
   top: -9999px;
