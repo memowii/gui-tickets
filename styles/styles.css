@@ -2,7 +2,9 @@ html {
   scroll-behavior: smooth;
 }
 
-table, th, td {
+table,
+th,
+td {
   border: 1px solid black;
   border-collapse: collapse;
 }
@@ -28,7 +30,7 @@ button {
   position: absolute;
   top: -9999px;
   left: -9999px;
-  /* opacity: 0;  https://www.sitepoint.com/five-ways-to-hide-elements-in-css/ */
+  /* opacity: 0;  https://www.sitepoint.com/five-ways-to-hide-elements-in-css */
 }
 
 #snackbar {
@@ -53,11 +55,24 @@ button {
 }
 
 @keyframes fadein {
-  from {bottom: 0; opacity: 0;}
-  to {bottom: 30px; opacity: 1;}
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+  to {
+    bottom: 30px;
+    opacity: 1;
+  }
+}
+@keyframes fadeout {
+  from {
+    bottom: 30px;
+    opacity: 1;
+  }
+  to {
+    bottom: 0;
+    opacity: 0;
+  }
 }
 
-@keyframes fadeout {
-  from {bottom: 30px; opacity: 1;}
-  to {bottom: 0; opacity: 0;}
-}
+/*# sourceMappingURL=styles.css.map */
