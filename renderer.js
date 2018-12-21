@@ -1,6 +1,6 @@
 "use strict";
 
-// https://codeburst.io/node-js-mysql-and-promises-4c3be599909b 
+// https://codeburst.io/node-js-mysql-and-promises-4c3be599909b
 
 let app = require('electron').remote;
 let fs = require('fs');
@@ -49,8 +49,8 @@ class DB {
   insertTicket(ticket) {
     return new Promise((resolve, reject) => {
       this.connection.query('INSERT INTO tickets SET ?', ticket, (error, result) => {
-        if (error) throw reject(error); 
-        resolve(result); 
+        if (error) throw reject(error);
+        resolve(result);
       });
     });
   }
@@ -58,8 +58,8 @@ class DB {
   insertTickets(tickets) {
     return new Promise((resolve, reject) => {
       this.connection.query('INSERT INTO tickets (consecutivo, esta_usado) VALUES ?', [tickets], (error, result) => {
-        if (error) throw reject(error); 
-        resolve(result); 
+        if (error) throw reject(error);
+        resolve(result);
       });
     });
   }
@@ -75,7 +75,7 @@ class DB {
 
   updateTicket(ticket) {
     return new Promise((resolve, reject) => {
-      this.connection.query('UPDATE tickets SET consecutivo=?, esta_usado=? WHERE id=?', 
+      this.connection.query('UPDATE tickets SET consecutivo=?, esta_usado=? WHERE id=?',
       [ticket.consecutivo, ticket.esta_usado, ticket.id], (error, result) => {
         if (error) return reject(error);
         resolve(result);
@@ -142,11 +142,11 @@ class Table {
         }, 3000);
       });
     }
-  
+
     let marcarDesmarcarButtons = document.getElementsByClassName('marcar-desmarcar');
     for (let i = 0; i < marcarDesmarcarButtons.length; i++) {
       marcarDesmarcarButtons[i].addEventListener('click', function () {
-        let consecutivoTableData = 
+        let consecutivoTableData =
                   this.parentElement.parentElement.parentElement.firstChild;
         let ticket = {
           id: this.value,
@@ -187,17 +187,17 @@ class Table {
     let aTag = document.createElement('a');
     aTag.setAttribute('href', '#last');
     aTag.innerHTML = 'temp';
-    let body = document.getElementsByTagName('body')[0]
+    let body = document.getElementsByTagName('body')[0];
     body.appendChild(aTag);
-    let anchor = document.getElementsByTagName('a')[0]
+    let anchor = document.getElementsByTagName('a')[0];
     anchor.click();
-    anchor.parentNode.removeChild(anchor); 
+    anchor.parentNode.removeChild(anchor);
   }
 }
 
 function populateDB() {
   let fileContent = fs.readFileSync('tickets-no-facturados-no-usados.txt', 'utf-8');
-  let consecutivos = fileContent.split('\n'); 
+  let consecutivos = fileContent.split('\n');
   let tickets = [];
 
   Object.entries(consecutivos).forEach(([key, consecutivo]) => {
